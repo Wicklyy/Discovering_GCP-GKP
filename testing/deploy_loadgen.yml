@@ -1,0 +1,28 @@
+---
+- name: Deploy Online Boutique Load Generator
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker is started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull and Run Load Generator
+      docker_container:
+        name: loadgen
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.4
+        state: started
+        restart_policy: always
+        network_mode: host
+        env:
+          FRONTEND_ADDR: "{{ lookup('env', 'FRONTEND_IP') }}"
+          USERS: "500"
+          SPAWN_RATE: "150"

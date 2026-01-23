@@ -1,0 +1,24 @@
+---
+- name: Cleanup Distributed Load Generator
+  hosts: all
+  become: yes
+  tasks:
+    - name: Stop and remove Load Generator containers
+      community.docker.docker_container:
+        # This list covers both master and worker names used earlier
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - loadgen-master
+        - loadgen-worker
+      # ignore_errors ensures the script continues even if a VM 
+      # only had one of the two containers (which is expected)
+      ignore_errors: yes
+
+    - name: Verify containers are gone
+      shell: docker ps -a
+      register: docker_output
+
+    - name: Show remaining containers
+      debug:
+        var: docker_output.stdout_lines

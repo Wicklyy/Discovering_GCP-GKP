@@ -1,0 +1,8 @@
+- name: Collect Performance Results
+  hosts: loadgen_master
+  tasks:
+    - name: Fetch CSV results to local machine
+      ansible.builtin.fetch:
+        src: "/opt/locust/results/performance_report_stats.csv"
+        dest: "./local_results/"
+        flat: yes

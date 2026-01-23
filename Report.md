@@ -65,4 +65,33 @@ The Service provides a stable network abstraction layer.
 * **`ports`**: Maps the Service port (**9555**) to the application's targetPort (**9555**).
 
 
-##
+## Performance evaluation
+
+We will be conducting the following tests:
+
+| Test type | LOCUST_USERS | LOCUST_SPAWN_RATE |
+| :--- | :--- | :--- |
+Baseline  | 50 | 5 |
+Load Test | 200 | 20 |
+Stress Test | 500 | 50 |
+Break Test | 1000 | 100 |
+Panic Test | 5000 | 500 |
+
+We observe something interesting the CPU usage never go over 40% this is probably due of actual customer simulation. But we also notice something important, only one of the nodes actually is impacted from the load, the other nodes are still at peace, we can conclude that the load is not well distributed between the nodes.
+
+
+| Test Type | Users | RPS (Throughput) | P95 Latency | Failure Rate |
+| :---: | :---: | :---: | :---: | :---: |
+| Baseline | 50 | 2.15 | 98 ms | 0.19% |
+| Load Test | 200 | 2.19 | 52 ms | 0.00% |
+| Stress Test | 500 | 2.20 | 39 ms | 0.00% |
+| Break Test | 1000 | 2.15 | 46 ms | 0.19% |
+| Panic Test | 5000 | 2.14 | 40 ms | 0.00% |
+
+![Efficiency Curve](pictures/distributed%20loadgen%20test/Efficiency%20Curve.png)
+
+We can notice something interesting, the "Warming Up" Effect in our data, the P95 Latency actually improved as the load increased (from 98ms down to ~40ms). This is probably due to the cache warming: The Redis cache and internal metadata caches became populated after the initial baseline test.
+
+The Throughput Bottleneck (Efficiency Curve) We notice in the efficiency_curve.png that our RPS remains almost perfectly flat at ~2.15 requests per second, even when jumping from 50 to 5000 users.
+
+We also notice that the cluster maintained a near-zero failure rate across all tiers, proving high resilience in the current configuration.

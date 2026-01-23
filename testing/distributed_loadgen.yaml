@@ -1,0 +1,49 @@
+---
+- name: Deploy Distributed Load Generator
+  hosts: all
+  become: yes
+  vars:
+    frontend_addr: "{{ lookup('env', 'FRONTEND_IP') }}"
+    master_ip: "{{ groups['loadgen_master'][0] }}"
+    locust_users: "{{ lookup('env', 'L_USERS') }}"
+    locust_spawn_rate: "{{ lookup('env', 'S_RATE') }}"
+
+  tasks:
+    - name: Install and Start Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Run Master Node
+      when: inventory_hostname in groups['loadgen_master']
+      docker_container:
+        name: loadgen-master
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.4
+        state: started
+        network_mode: host
+        env:
+          FRONTEND_ADDR: "{{ frontend_addr }}"
+          LOCUST_MODE_MASTER: "true"
+          LOCUST_EXPECT_WORKERS: "2" # Set this to the number of worker VMs
+          # Adding these to trigger CSV generation automatically
+          LOCUST_CSV: "/results/performance_report"
+          LOCUST_HEADLESS: "true"
+          LOCUST_USERS: locust_users
+          LOCUST_SPAWN_RATE: locust_spawn_rate
+          LOCUST_RUN_TIME: "4m"
+        volumes:
+          - /opt/locust/results:/results
+
+    - name: Run Worker Nodes
+      when: inventory_hostname in groups['loadgen_workers']
+      docker_container:
+        name: loadgen-worker
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.4
+        state: started
+        network_mode: host
+        env:
+          FRONTEND_ADDR: "{{ frontend_addr }}"
+          LOCUST_MODE_WORKER: "true"
+          # Use the private IP of the master node
+          LOCUST_MASTER_NODE_HOST: "{{ hostvars[groups['loadgen_master'][0]]['private_ip'] }}"

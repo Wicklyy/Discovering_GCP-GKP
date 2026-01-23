@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+      - name: grpc-exporter
+        image: fullstorydev/grpc-exporter:v0.6.0
+        imagePullPolicy: IfNotPresent
+        args:
+        - "--collect-interval=15s"
+        - "--addr=localhost:8080"
+        ports:
+        - containerPort: 9100
+          name: grpc-metrics
+        resources:
+          requests:
+            cpu: "5m"
+            memory: "24Mi"
+          limits:
+            cpu: "50m"
+            memory: "64Mi"

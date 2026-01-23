@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalogservice-v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productcatalogservice
+      version: v3
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice
+        version: v3
+    spec:
+      containers:
+      - name: server
+        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice:v0.10.4
+        env:
+        - name: EXTRA_LATENCY
+          value: "3000ms"

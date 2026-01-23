@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: monitoring 
+
+resources:
+- grafana-resources.yaml
+- monitoring-stack.yaml
+- node-exporter.yaml
+- prometheus-config.yaml
+- grafana-config.yaml
+
+configMapGenerator:
+- name: boutique-dashboards-set
+  namespace: monitoring
+  files:
+    - dashboards/Custom_dashboard.json
+    #- dashboards/gRPC.json
+    #- dashboards/Cluster_monitoring.json
+    #- dashboards/Redis_Dashboard.json
+#    - dashboards/Node_Exporter.json #file is too big to get copied in the metadata
+  options:
+    labels:
+      grafana_dashboard: "1"

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cart
+  namespace: default # Ensure this matches your boutique namespace
+spec:
+  template:
+    spec:
+      containers:
+      - name: redis-exporter
+        image: oliver006/redis_exporter:v1.58.0
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 9121
+          name: redis-metrics
+        env:
+        - name: REDIS_ADDR
+          value: "redis://localhost:6379"

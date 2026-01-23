@@ -74,7 +74,7 @@ A quick reference guide for Google Cloud Platform and GKE cluster management.
 ### Service Management
 | Command | Description |
 | :--- | :--- |
-| `kubectl get svc` | List all active services and their IPs |
+| `kubectl get svc -n [Scope]` | List all active services in a scope and their IPs, if no scope defined `default` scope is set |
 | `kubectl describe svc [SERVICE_NAME]` | Detailed information about a service |
 | `kubectl expose deployment [NAME] --port [SVC_PORT] --target-port [POD_PORT] --type LoadBalancer` | Create an external Load Balancer |
 

@@ -24,7 +24,7 @@ export FRONTEND_IP=$(kubectl get svc frontend-external -o jsonpath='{.status.loa
 ### Other variables used by Terrform
 
 # Number of VMs created
-export TF_VAR_machineCount=1
+export TF_VAR_machineCount=3
 
 # VM type
 export TF_VAR_machineType="f1-micro"

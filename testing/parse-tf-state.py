@@ -19,7 +19,7 @@ with open('terraform.tfstate') as json_file:
                     print(f"Found VM: {vm['attributes']['name']} (IP: {ip})")
 
 # Write the Ansible inventory
-with open('hosts', 'w') as host_file:
+with open('hosts.ini', 'w') as host_file:
     host_file.write('[loadgenerators]\n')
     for IP in IPs:
         host_file.write(IP + '\n')

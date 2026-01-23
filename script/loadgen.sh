@@ -6,7 +6,7 @@ cd ../testing
 source ./setup.sh
 
 echo "running ansible loadgen script"
-ansible-playbook -i hosts deploy_loadgen.yml
+ansible-playbook -i hosts.ini deploy_loadgen.yml
 
 #to stop spam
-#ansible all -i hosts -m shell -a "sudo docker stop loadgen"
+#ansible all -i hosts.ini -m shell -a "sudo docker stop loadgen"

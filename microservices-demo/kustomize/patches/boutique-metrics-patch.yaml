@@ -1,0 +1,15 @@
+# boutique-metrics-patch.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-boutique-services # Kustomize can apply this to multiple targets
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        # Most Boutique services expose metrics on their main port
+        # frontend: 8080, checkout: 5050, etc.
+        # This tells Prometheus to try the port it finds in the Pod spec.
+        prometheus.io/port: "8080" 
+        prometheus.io/path: "/metrics"

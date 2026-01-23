@@ -11,9 +11,6 @@ provider "google" {
 
 resource "google_compute_instance" "vm_instance" {
 
-  ## for a setup having multiple instances of the same type, you can do
-  ## the following, there would be 2 instances of the same configuration
-  ## provisioned
   count        = var.machineCount
   name         = "${var.instance-name}-${count.index}"
 

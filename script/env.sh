@@ -6,3 +6,4 @@ export SERVICE_ID=testing
 export REGION=europe-west6
 export ZONE=europe-west6-a
 export CLUSTER_NAME=online-boutique
+export NODE_NUMBER=4

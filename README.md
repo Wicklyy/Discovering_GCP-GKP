@@ -1,5 +1,70 @@
 # Discovering GCP & GKP
-This repo is a lab assignmenet in the context of cloud computing course aiming in applying all the theory learned during the courses in a practical enviroment such as google cloud using the kubernetees tool
+This repo is a lab assignmenet in the context of cloud computing course aiming in applying all the theory learned during the courses in a practical enviroment such as google cloud using the kubernetees tool. It contains the full automation suite for the Online Boutique application, including GKE orchestration, Terraform provisioning, and Ansible configuration.
+
+## Project Organization & Deployment Guide
+
+### 1. File Map
+Where to find the code for each lab step:
+
+* **GKE Cluster Configuration:** `./script` (`env.sh`, `run-conf.sh`,`stop-conf.sh`)
+* **Infrastructure as Code (VMs):** `./testing/` contains the HCL files for GCE provisioning
+* **Automation Scripts:** `./script/` contains the logic for `vm_allocation`/`vm_deallocation.sh`, `loadgen.sh` and `deploy.sh`/`delete-deployment.sh`
+* **Monitoring Stack:** `./microservices-demo/kustomization/monitoring/` contains the Kustomize layers for Prometheus and Grafana
+* **Canary Deployment:** `./microservices-demo/kustomization/canary/`.
+* **Centralized Config:** `./testing/setup.sh` is the "Source of Truth" for shared environment variables.
+
+---
+
+### 2. Deployment Instructions
+
+Follow these steps in order to deploy the complete architecture:
+
+#### GKE & Application
+**1.  Configure Environment:** Edit `env.sh` with your Project ID and Region.
+**2.  Provision Cluster:** 
+```bash
+    ./script/run-conf.sh
+```
+**3.  Deploy Boutique:** 
+```bash
+    ./script/deploy.sh
+```
+*note: Monitoring Stack automatically deployed in the kustomization manifest*
+**4. Stop deployment:**
+```bash
+    ./script/delete-deployment.sh
+```
+**5. Free Cluster:**
+```bash
+    ./script/stop-conf.sh
+```
+
+
+#### External Load Generator
+**1. Allocate Resources:**
+```bash
+./script/vm_allocation
+```
+*This runs Terraform and dynamically updates the hosts.ini with the VM's public IP.*
+
+**2. Configure (./testing/setup.sh) and Launch:**
+- classic Loadgen (no master, all vm independant):
+```bash
+./script/loadgen.sh
+```
+- distributed (master/worker configuration):
+```bash
+./script/distributed_loadgen.sh
+```
+**3. Retreive data (only if distributed):**
+```bash
+./script/retreive-csv.sh
+```
+**4. Deallocate vm's:**
+```bash
+./script/vm-deallocation.sh
+```
+
 
 ## Notes
 - Curently using the e2-medium instances, might have to upgrade later as they only have 4GB of RAM
